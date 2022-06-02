@@ -64,7 +64,6 @@ class Asset:
 
         Asset.overall_quantity_of_owned_items += self.asset_owned_quantity
 
-    def elongate_instances_list(self):
         Asset.all_instances.append(self)
 
 
@@ -84,6 +83,7 @@ class Asset:
         print(f'Balance: {round(self.balance85prcnt,2)} zł (after 15% Steam Market commission) or {round(self.balance98prcnt,2)} zł (after 2% csdeals.com commission).')
         print(f'Balance in percents: {round(self.balance85prcnt_in_percents,2)}% (after 15% Steam Market commission) or {round(self.balance98prcnt_in_percents,2)}% (after 2% csdeals.com commission).')
         print(f'Percent of all money invested in this wallet: {round(self.percent_of_sum_of_invested_money,2)}%.\n')
+
 
     def add_asset_summary_to_report(self):
 
@@ -155,16 +155,21 @@ class Asset:
         p9.add_run(f'{round(self.percent_of_sum_of_invested_money,2)}%').bold = True
         p9.add_run(f'.\n')
 
-    def general_summary():
+
+    def print_general_summary():
         Asset.money_after_selling_all_85prcnt = Asset.profits_and_losses_balance85_prcnt + Asset.sum_of_invested_money
         Asset.money_after_selling_all_98prcnt = Asset.profits_and_losses_balance_98prcnt + Asset.sum_of_invested_money
         print(f'Money invested in this wallet: {round(Asset.sum_of_invested_money,2)} zł.')
         print(f'Overall quantity of owned items: {Asset.overall_quantity_of_owned_items}.')
-        print(f'If you would sell all of the assets in a following wallet you would get: {round(Asset.money_after_selling_all_85prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.money_after_selling_all_98prcnt,2)} zł (after 2% commission - csdeals.com).')
-        print(f'Balance after selling all of the assets in a following wallet you would get: {round(Asset.profits_and_losses_balance85_prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.profits_and_losses_balance_98prcnt,2)} zł (after 2% commission - csdeals.com).')
+        print(f'Wallet\'s total value: {round(Asset.money_after_selling_all_85prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.money_after_selling_all_98prcnt,2)} zł (after 2% commission - csdeals.com).')
+        print(f'Wallet\'s balance: {round(Asset.profits_and_losses_balance85_prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.profits_and_losses_balance_98prcnt,2)} zł (after 2% commission - csdeals.com).')
         print(f'Balance after selling only profitable assets: {round(Asset.only_profits_85prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.only_profits_98prcnt,2)} zł (after 2% commission - csdeals.com).')
         print(f'Balance after selling only lossable assets: {round(Asset.only_losses_85prcnt,2)} zł (after 15% commission - Steam Market) or {round(Asset.only_losses_98prcnt,2)} zł (after 2% commission - csdeals.com).\n')
 
+
+    def add_general_summary_to_report():
+        Asset.money_after_selling_all_85prcnt = Asset.profits_and_losses_balance85_prcnt + Asset.sum_of_invested_money
+        Asset.money_after_selling_all_98prcnt = Asset.profits_and_losses_balance_98prcnt + Asset.sum_of_invested_money
 
         p0 = document.add_paragraph()
         p0.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
@@ -193,9 +198,7 @@ class Asset:
 
         p3 = document.add_paragraph(style = 'List Bullet')
         p3.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
-        p3.add_run(f'If you would ')
-        p3.add_run(f'sell all of the assets ').bold = True
-        p3.add_run(f'in a following wallet you would get: ')
+        p3.add_run(f'Wallet\'s total value: ').bold = True
         p3.add_run(f'{round(Asset.money_after_selling_all_85prcnt,2)} zł ').bold = True
         p3.add_run(f'(after 15% Steam Market commission) or ')
         p3.add_run(f'{round(Asset.money_after_selling_all_98prcnt,2)} zł ').bold = True
@@ -203,12 +206,7 @@ class Asset:
 
         p4 = document.add_paragraph(style = 'List Bullet')
         p4.paragraph_format.line_spacing_rule = WD_LINE_SPACING.SINGLE
-        p4.add_run(f'Balance ').bold = True
-        p4.add_run(f'after selling ')
-        p4.add_run(f'all ').bold = True
-        p4.add_run(f'of the assets in a following ')
-        p4.add_run(f'wallet ').bold = True
-        p4.add_run(f'you would get: ')
+        p4.add_run(f'Wallet\'s balance: ').bold = True
         p4.add_run(f'{round(Asset.profits_and_losses_balance85_prcnt,2)} zł ').bold = True
         p4.add_run(f'(after 15% Steam Market commission) or ')
         p4.add_run(f'{round(Asset.profits_and_losses_balance_98prcnt,2)} zł ').bold = True
@@ -259,17 +257,6 @@ asset_10.calc_percent_of_money_invested_in_asset()
 asset_11.calc_percent_of_money_invested_in_asset()
 asset_12.calc_percent_of_money_invested_in_asset()
 
-asset_1.elongate_instances_list()
-asset_3.elongate_instances_list()
-asset_4.elongate_instances_list()
-asset_6.elongate_instances_list()
-asset_7.elongate_instances_list()
-asset_8.elongate_instances_list()
-asset_9.elongate_instances_list()
-asset_10.elongate_instances_list()
-asset_11.elongate_instances_list()
-asset_12.elongate_instances_list()
-
 Asset.all_instances.sort(key=Asset.get_percent_of_money_invested_in_asset)
 Asset.all_instances.reverse()
 
@@ -298,6 +285,6 @@ Asset.all_instances.reverse()
 for i in range(0,len(Asset.all_instances)):
     Asset.all_instances[i].add_asset_summary_to_report()
 
-Asset.general_summary()
+Asset.add_general_summary_to_report()
 
 document.save('report.docx')

@@ -236,6 +236,26 @@ class Asset:
         p6.add_run(f'(after 2% csdeals.com commission).')
 
 
+    def save_general_summary_data():
+        now = datetime.datetime.today().strftime("%d-%m-%y")
+        ws = wb.worksheets[-1]
+        next_empty_cell = ws['OH69'].value
+        ws[f'A{next_empty_cell}'] = now
+        ws[f'B{next_empty_cell}'] = round(Asset.sum_of_invested_money,2)
+        ws[f'C{next_empty_cell}'] = int(Asset.overall_quantity_of_owned_items)
+        ws[f'D{next_empty_cell}'] = int(Asset.money_after_selling_all_85prcnt)
+        ws[f'E{next_empty_cell}'] = int(Asset.money_after_selling_all_98prcnt)
+        ws[f'F{next_empty_cell}'] = int(Asset.profits_and_losses_balance85_prcnt)
+        ws[f'G{next_empty_cell}'] = int(Asset.profits_and_losses_balance_98prcnt)
+        ws[f'H{next_empty_cell}'] = int(Asset.only_profits_85prcnt)
+        ws[f'I{next_empty_cell}'] = int(Asset.only_profits_98prcnt)
+        ws[f'J{next_empty_cell}'] = int(Asset.only_losses_85prcnt)
+        ws[f'K{next_empty_cell}'] = int(Asset.only_losses_98prcnt)
+
+
+        ws['OH69'].value += 1
+        wb.save('wallet_data.xlsx')
+
 for i in range(0,len(wb.sheetnames)-2):
     Asset(wb.sheetnames[i])
 
@@ -249,5 +269,6 @@ for i in range(0,len(Asset.all_instances)):
     Asset.all_instances[i].add_asset_summary_to_report()
 
 Asset.add_general_summary_to_report()
+Asset.save_general_summary_data()
 
 document.save('report.docx')

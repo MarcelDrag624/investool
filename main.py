@@ -1,11 +1,12 @@
 import requests
-import xlrd
+from openpyxl import Workbook, load_workbook
+import datetime
 from docx import Document
 from docx.enum.text import WD_LINE_SPACING
 from docx.shared import Pt
 
-loc = "assets_data.xls"
-wb = xlrd.open_workbook(loc)
+loc = "wallet_data.xlsx"
+wb = load_workbook(loc, data_only = True)
 
 document = Document()
 
@@ -31,14 +32,14 @@ class Asset:
     def get_percent_of_money_invested_in_asset(self):
         return self.percent_of_sum_of_invested_money
 
-    def __init__(self, sheetbook_num):
+    def __init__(self, sheet_name):
 
-        self.sheet = wb.sheet_by_index(sheetbook_num)
-        self.asset_name = self.sheet.cell_value(0,1)
-        self.asset_url = self.sheet.cell_value(0,0)
-        self.asset_owned_quantity = int(self.sheet.cell_value(14,1))
-        self.asset_invested_money = self.sheet.cell_value(14,2)
-        self.asset_average_money_spent_on_single_piece = self.asset_invested_money / self.asset_owned_quantity
+        self.sheet = wb[sheet_name]
+        self.asset_name = self.sheet['B1'].value
+        self.asset_url = self.sheet['A1'].value
+        self.asset_owned_quantity = self.sheet['B15'].value
+        self.asset_invested_money = self.sheet['C15'].value
+        self.asset_average_money_spent_on_single_piece = self.asset_invested_money / int(self.asset_owned_quantity)
         self.asset_data_from_api = requests.get(self.asset_url).json()
         self.asset_current_lowest_price = float(self.asset_data_from_api['lowest_price'].replace(',',".").replace('zł',""))
         self.asset_current_median_price = float(self.asset_data_from_api['median_price'].replace(',',".").replace('zł',""))
@@ -235,52 +236,14 @@ class Asset:
         p6.add_run(f'(after 2% csdeals.com commission).')
 
 
-asset_1 = Asset(0)
-asset_3 = Asset(2)
-asset_4 = Asset(3)
-asset_6 = Asset(5)
-asset_7 = Asset(6)
-asset_8 = Asset(7)
-asset_9 = Asset(8)
-asset_10 = Asset(9)
-asset_11 = Asset(10)
-asset_12 = Asset(11)
+for i in range(0,len(wb.sheetnames)-2):
+    Asset(wb.sheetnames[i])
 
-asset_1.calc_percent_of_money_invested_in_asset()
-asset_3.calc_percent_of_money_invested_in_asset()
-asset_4.calc_percent_of_money_invested_in_asset()
-asset_6.calc_percent_of_money_invested_in_asset()
-asset_7.calc_percent_of_money_invested_in_asset()
-asset_8.calc_percent_of_money_invested_in_asset()
-asset_9.calc_percent_of_money_invested_in_asset()
-asset_10.calc_percent_of_money_invested_in_asset()
-asset_11.calc_percent_of_money_invested_in_asset()
-asset_12.calc_percent_of_money_invested_in_asset()
+for i in range(0,len(Asset.all_instances)):
+    Asset.all_instances[i].calc_percent_of_money_invested_in_asset()
 
 Asset.all_instances.sort(key=Asset.get_percent_of_money_invested_in_asset)
 Asset.all_instances.reverse()
-
-# asset_1.print_asset_summary()
-# asset_3.print_asset_summary()
-# asset_4.print_asset_summary()
-# asset_6.print_asset_summary()
-# asset_7.print_asset_summary()
-# asset_8.print_asset_summary()
-# asset_9.print_asset_summary()
-# asset_10.print_asset_summary()
-# asset_11.print_asset_summary()
-# asset_12.print_asset_summary()
-
-# asset_1.add_asset_summary_to_report()
-# asset_3.add_asset_summary_to_report()
-# asset_4.add_asset_summary_to_report()
-# asset_6.add_asset_summary_to_report()
-# asset_7.add_asset_summary_to_report()
-# asset_8.add_asset_summary_to_report()
-# asset_9.add_asset_summary_to_report()
-# asset_10.add_asset_summary_to_report()
-# asset_11.add_asset_summary_to_report()
-# asset_12.add_asset_summary_to_report()
 
 for i in range(0,len(Asset.all_instances)):
     Asset.all_instances[i].add_asset_summary_to_report()
